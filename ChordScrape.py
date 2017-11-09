@@ -1,12 +1,31 @@
 import urllib2
+import requests
 from bs4 import BeautifulSoup
 
-url_page = 'http://www.chordzone.org/2016/06/post-malone-go-flex.html#axzz4vtsbpEgZ'
+url_page = raw_input("Enter a website: ")
 
-page = urllib2.urlopen(url_page)
+page = requests.get(url_page)
 
-soup = BeautifulSoup(page, "html.parser")
+data = page.text
 
-lyric_box = soup.find("div", attrs={'class':'entry-content'})
-lyric_box_content = lyric_box.text.strip()
-print lyric_box_content
+soup = BeautifulSoup(data, "html.parser")
+
+lyrics = (soup.find('div', attrs={'class':'entry-content'})).text.strip()
+
+lyriclist = lyrics.splitlines()
+i = 0
+while i < len(lyriclist):
+	if lyriclist[i].startswith("Time"):
+		break
+	i += 1
+
+for line in lyriclist[i:]:
+	if line.startswith("<"):
+		print("\n")
+		break
+	elif line.startswith("[INTRO]"):
+		print("\n" + line)
+	elif line.startswith("www"):
+		continue
+	else:
+		print(line)
